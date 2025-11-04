@@ -14,7 +14,90 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      health_predictions: {
+        Row: {
+          age: number | null
+          alcohol: number | null
+          cholesterol: number | null
+          created_at: string | null
+          diastolic_bp: number | null
+          gender: number | null
+          glucose: number | null
+          height: number | null
+          id: string
+          physical_activity: number | null
+          prediction_result: string | null
+          risk_score: number | null
+          smoking: number | null
+          systolic_bp: number | null
+          user_id: string
+          weight: number | null
+        }
+        Insert: {
+          age?: number | null
+          alcohol?: number | null
+          cholesterol?: number | null
+          created_at?: string | null
+          diastolic_bp?: number | null
+          gender?: number | null
+          glucose?: number | null
+          height?: number | null
+          id?: string
+          physical_activity?: number | null
+          prediction_result?: string | null
+          risk_score?: number | null
+          smoking?: number | null
+          systolic_bp?: number | null
+          user_id: string
+          weight?: number | null
+        }
+        Update: {
+          age?: number | null
+          alcohol?: number | null
+          cholesterol?: number | null
+          created_at?: string | null
+          diastolic_bp?: number | null
+          gender?: number | null
+          glucose?: number | null
+          height?: number | null
+          id?: string
+          physical_activity?: number | null
+          prediction_result?: string | null
+          risk_score?: number | null
+          smoking?: number | null
+          systolic_bp?: number | null
+          user_id?: string
+          weight?: number | null
+        }
+        Relationships: []
+      }
+      profiles: {
+        Row: {
+          created_at: string | null
+          email: string
+          full_name: string
+          id: string
+          phone: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          email: string
+          full_name: string
+          id: string
+          phone?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          email?: string
+          full_name?: string
+          id?: string
+          phone?: string | null
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
