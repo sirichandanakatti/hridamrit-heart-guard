@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Heart, ArrowLeft, Shield, Activity, Coffee, Moon, Dumbbell, Salad } from "lucide-react";
+import { Heart, ArrowLeft, Shield, Activity, Salad, Brain, Stethoscope, Cigarette, Wine } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import precautionsIcon from "@/assets/precautions-icon.jpg";
 
@@ -10,75 +10,107 @@ const Precautions = () => {
   const precautions = [
     {
       icon: Activity,
-      title: "Regular Exercise",
-      description: "Engage in at least 30 minutes of moderate aerobic activity daily",
+      title: "Regular Exercise (Vyayam)",
+      description: "30 minutes of brisk walking or yoga daily. Include pranayama for heart health.",
       details: [
-        "Walking, jogging, or cycling",
-        "Swimming or water aerobics",
-        "Yoga or stretching exercises",
-        "Strength training 2-3 times per week"
+        "Morning walks ideal in Indian climate",
+        "Avoid midday sun (11am-4pm)",
+        "Yoga asanas: Surya Namaskar, Bhujangasana",
+        "Pranayama: Anulom Vilom, Kapalbhati daily"
       ],
-      priority: "high"
+      priority: "high",
+      indianTip: "Morning walks are ideal in Indian climate. Avoid midday sun."
     },
     {
       icon: Salad,
-      title: "Healthy Diet",
-      description: "Follow a heart-healthy Mediterranean-style diet",
+      title: "Heart-Healthy Indian Diet",
+      description: "Include whole grains, dal, seasonal vegetables, and fruits",
       details: [
-        "Eat more fruits and vegetables",
-        "Choose whole grains over refined",
-        "Limit saturated fats and trans fats",
-        "Reduce sodium intake to less than 2,300mg/day"
+        "Traditional foods: moong dal, methi, karela, amla",
+        "Limit ghee, reduce salt in pickles",
+        "Prefer home-cooked meals over street food",
+        "Add turmeric, garlic, ginger to cooking"
       ],
-      priority: "high"
+      priority: "high",
+      indianTip: "Limit ghee, reduce salt in pickles, prefer home-cooked meals."
     },
     {
-      icon: Coffee,
-      title: "Limit Stimulants",
-      description: "Moderate consumption of caffeine and avoid excessive alcohol",
+      icon: Brain,
+      title: "Stress Management (Mann ki Shanti)",
+      description: "Practice meditation, yoga, and deep breathing exercises daily",
       details: [
-        "Limit coffee to 2-3 cups per day",
-        "Avoid energy drinks",
-        "Maximum 1 drink per day (women) or 2 (men)",
-        "Stay hydrated with water"
+        "Try Vipassana or transcendental meditation",
+        "Join local yoga centers",
+        "Practice mindfulness daily",
+        "Stay connected with family"
       ],
-      priority: "medium"
+      priority: "high",
+      indianTip: "Try Vipassana or transcendental meditation. Join local yoga centers."
     },
     {
-      icon: Moon,
-      title: "Quality Sleep",
-      description: "Aim for 7-9 hours of quality sleep each night",
+      icon: Stethoscope,
+      title: "Regular Health Checkups",
+      description: "Monitor BP, cholesterol, and blood sugar every 3-6 months",
       details: [
-        "Maintain consistent sleep schedule",
-        "Create a relaxing bedtime routine",
-        "Keep bedroom cool and dark",
-        "Avoid screens 1 hour before bed"
+        "Free health camps at govt hospitals",
+        "Regular BP monitoring",
+        "HbA1c tests for diabetes control",
+        "Annual comprehensive checkup"
       ],
-      priority: "high"
+      priority: "high",
+      indianTip: "Many government hospitals offer free health camps. Utilize them."
+    },
+    {
+      icon: Cigarette,
+      title: "Quit Smoking & Tobacco",
+      description: "Avoid cigarettes, bidi, hookah, and chewing tobacco completely",
+      details: [
+        "Join tobacco cessation programs",
+        "Call national quitline: 1800-11-2356",
+        "Avoid gutkha and paan masala",
+        "Seek support from local health centers"
+      ],
+      priority: "high",
+      indianTip: "Join tobacco cessation programs. Call national quitline: 1800-11-2356."
+    },
+    {
+      icon: Wine,
+      title: "Limit Alcohol",
+      description: "If you drink, limit to moderate amounts. Better to avoid completely",
+      details: [
+        "Choose buttermilk, coconut water instead",
+        "Herbal teas: tulsi, ginger, cardamom",
+        "Avoid heavy drinking culture",
+        "Stay hydrated with Indian beverages"
+      ],
+      priority: "medium",
+      indianTip: "Choose healthy Indian beverages like buttermilk, coconut water, herbal teas."
     },
     {
       icon: Shield,
-      title: "Stress Management",
-      description: "Practice stress-reduction techniques regularly",
+      title: "Control Diabetes",
+      description: "India has high diabetes rates. Keep blood sugar in check",
       details: [
-        "Deep breathing exercises",
-        "Meditation or mindfulness",
-        "Regular social connections",
-        "Professional counseling if needed"
+        "Regular HbA1c tests",
+        "Limit rice/roti portions",
+        "Increase fiber intake",
+        "Monitor fasting & post-meal glucose"
       ],
-      priority: "high"
+      priority: "high",
+      indianTip: "Regular HbA1c tests, limit rice/roti portions, increase fiber intake."
     },
     {
-      icon: Dumbbell,
-      title: "Weight Management",
-      description: "Maintain a healthy BMI between 18.5-24.9",
+      icon: Heart,
+      title: "Monitor Blood Pressure",
+      description: "Keep BP under 120/80 mmHg. Check regularly at home",
       details: [
-        "Track your weight weekly",
-        "Set realistic weight loss goals",
-        "Combine diet and exercise",
-        "Consult healthcare provider for guidance"
+        "Reduce salt in dal, sabzi",
+        "Avoid packaged snacks and papad",
+        "Home BP monitor recommended",
+        "Track readings in diary"
       ],
-      priority: "medium"
+      priority: "high",
+      indianTip: "Reduce salt in dal, sabzi. Avoid packaged snacks and papad."
     }
   ];
 
@@ -109,9 +141,9 @@ const Precautions = () => {
             alt="Precautions" 
             className="w-32 h-32 mx-auto mb-6 rounded-2xl shadow-medical"
           />
-          <h2 className="text-4xl font-bold mb-4">Heart Health Precautions</h2>
+          <h2 className="text-4xl font-bold mb-4">🇮🇳 Heart Health Precautions for India</h2>
           <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-            Follow these evidence-based preventive measures to reduce your risk of heart disease
+            Essential preventive measures tailored for Indian lifestyle and healthcare system
           </p>
         </div>
 
@@ -142,7 +174,7 @@ const Precautions = () => {
                     {precaution.description}
                   </CardDescription>
                 </CardHeader>
-                <CardContent>
+                <CardContent className="space-y-3">
                   <ul className="space-y-2">
                     {precaution.details.map((detail, idx) => (
                       <li key={idx} className="flex items-start text-sm">
@@ -151,30 +183,36 @@ const Precautions = () => {
                       </li>
                     ))}
                   </ul>
+                  {precaution.indianTip && (
+                    <div className="bg-primary/5 p-3 rounded-lg border-l-4 border-primary mt-3">
+                      <p className="text-xs font-semibold text-primary">🇮🇳 India-Specific Tip:</p>
+                      <p className="text-xs mt-1">{precaution.indianTip}</p>
+                    </div>
+                  )}
                 </CardContent>
               </Card>
             );
           })}
         </div>
 
-        {/* Emergency Notice */}
+        {/* Emergency Notice - India */}
         <Card className="mt-12 bg-destructive/10 border-destructive shadow-medical">
           <CardHeader>
             <CardTitle className="text-destructive flex items-center gap-2">
               <Shield className="w-6 h-6" />
-              Emergency Warning Signs
+              🇮🇳 Emergency Warning Signs for India
             </CardTitle>
           </CardHeader>
           <CardContent>
             <p className="mb-4 font-semibold">Call emergency services immediately if you experience:</p>
-            <ul className="grid grid-cols-1 md:grid-cols-2 gap-3">
+            <ul className="grid grid-cols-1 md:grid-cols-2 gap-3 mb-6">
               {[
-                "Chest pain or discomfort",
-                "Shortness of breath",
+                "Chest pain or discomfort (Seene mein dard)",
+                "Shortness of breath (Saans lene mein taklif)",
                 "Pain in arms, back, neck, or jaw",
-                "Cold sweat or nausea",
-                "Lightheadedness or dizziness",
-                "Unusual fatigue"
+                "Cold sweat or nausea (Pasina aana, ulti)",
+                "Lightheadedness or dizziness (Chakkar aana)",
+                "Unusual fatigue (Bahut zyada thakan)"
               ].map((symptom, idx) => (
                 <li key={idx} className="flex items-center text-sm">
                   <span className="text-destructive mr-2 text-xl">⚠</span>
@@ -182,6 +220,19 @@ const Precautions = () => {
                 </li>
               ))}
             </ul>
+            <div className="bg-card rounded-lg p-4">
+              <p className="text-sm font-semibold mb-2">🇮🇳 Emergency Numbers in India:</p>
+              <div className="grid grid-cols-2 gap-3 text-sm">
+                <div>
+                  <p className="font-bold text-destructive text-xl">108</p>
+                  <p className="text-xs">National Ambulance</p>
+                </div>
+                <div>
+                  <p className="font-bold text-destructive text-xl">102</p>
+                  <p className="text-xs">State Ambulance</p>
+                </div>
+              </div>
+            </div>
           </CardContent>
         </Card>
       </main>

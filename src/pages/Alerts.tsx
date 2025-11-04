@@ -10,7 +10,7 @@ import { toast } from "sonner";
 
 const Alerts = () => {
   const navigate = useNavigate();
-  const [phoneNumber, setPhoneNumber] = useState("+1 (555) 123-4567");
+  const [phoneNumber, setPhoneNumber] = useState("+91 98765 43210");
   const [alertSettings, setAlertSettings] = useState({
     highHeartRate: true,
     abnormalBP: true,
@@ -79,9 +79,9 @@ const Alerts = () => {
       <main className="container mx-auto px-4 py-8 max-w-4xl">
         {/* Hero Section */}
         <div className="mb-12">
-          <h2 className="text-4xl font-bold mb-4">SMS Alert System</h2>
+          <h2 className="text-4xl font-bold mb-4">🇮🇳 SMS Alert System for India</h2>
           <p className="text-lg text-muted-foreground">
-            Configure SMS notifications to stay informed about critical health changes
+            Configure SMS notifications for critical health alerts. Compatible with all Indian mobile networks.
           </p>
         </div>
 
@@ -105,7 +105,7 @@ const Alerts = () => {
                   type="tel"
                   value={phoneNumber}
                   onChange={(e) => setPhoneNumber(e.target.value)}
-                  placeholder="+1 (555) 000-0000"
+                  placeholder="+91 98765 43210"
                 />
               </div>
               <div className="flex gap-3">
@@ -158,12 +158,12 @@ const Alerts = () => {
           </div>
         </div>
 
-        {/* Emergency Protocol */}
+        {/* Emergency Protocol - India */}
         <Card className="bg-destructive/10 border-destructive shadow-medical">
           <CardHeader>
             <CardTitle className="text-destructive flex items-center gap-2">
               <AlertTriangle className="w-6 h-6" />
-              Emergency Response Protocol
+              🇮🇳 Emergency Response Protocol for India
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
@@ -176,15 +176,32 @@ const Alerts = () => {
                 <strong>Emergency contacts</strong> will be notified automatically
               </li>
               <li className="text-sm">
-                <strong>Call emergency services</strong> (911) if symptoms are severe
+                <strong>Call emergency services</strong> (108/102) if symptoms are severe
               </li>
               <li className="text-sm">
-                <strong>Follow emergency action plan</strong> provided by your healthcare provider
+                <strong>Visit nearest hospital</strong> - Government hospitals provide emergency cardiac care
               </li>
             </ol>
             <div className="bg-card rounded-lg p-4 mt-4">
-              <p className="text-sm font-semibold mb-2">Emergency Hotline:</p>
-              <p className="text-2xl font-bold text-destructive">911</p>
+              <p className="text-sm font-semibold mb-3">🇮🇳 Emergency Hotlines in India:</p>
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <p className="text-2xl font-bold text-destructive">108</p>
+                  <p className="text-xs">National Ambulance Service</p>
+                </div>
+                <div>
+                  <p className="text-2xl font-bold text-destructive">102</p>
+                  <p className="text-xs">State Ambulance Service</p>
+                </div>
+                <div>
+                  <p className="text-2xl font-bold text-destructive">1800-11-2356</p>
+                  <p className="text-xs">National Tobacco Quitline</p>
+                </div>
+                <div>
+                  <p className="text-2xl font-bold text-destructive">104</p>
+                  <p className="text-xs">National Health Helpline</p>
+                </div>
+              </div>
             </div>
           </CardContent>
         </Card>
