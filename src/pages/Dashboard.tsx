@@ -1,10 +1,65 @@
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Heart, Activity, Shield, AlertTriangle, Bell, TrendingUp } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { supabase } from "@/integrations/supabase/client";
+import { toast } from "sonner";
+import type { User } from "@supabase/supabase-js";
 
 const Dashboard = () => {
   const navigate = useNavigate();
+  const [user, setUser] = useState<User | null>(null);
+  const [userName, setUserName] = useState<string>("User");
+
+  useEffect(() => {
+    // Check authentication
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      if (!session) {
+        navigate("/auth");
+      } else {
+        setUser(session.user);
+        fetchUserProfile(session.user.id);
+      }
+    });
+
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(
+      (_event, session) => {
+        if (!session) {
+          navigate("/auth");
+        } else {
+          setUser(session.user);
+          fetchUserProfile(session.user.id);
+        }
+      }
+    );
+
+    return () => subscription.unsubscribe();
+  }, [navigate]);
+
+  const fetchUserProfile = async (userId: string) => {
+    const { data, error } = await supabase
+      .from("profiles")
+      .select("full_name")
+      .eq("id", userId)
+      .single();
+
+    if (error) {
+      console.error("Error fetching profile:", error);
+    } else if (data) {
+      setUserName(data.full_name || "User");
+    }
+  };
+
+  const handleLogout = async () => {
+    const { error } = await supabase.auth.signOut();
+    if (error) {
+      toast.error("Error logging out");
+    } else {
+      toast.success("Logged out successfully");
+      navigate("/");
+    }
+  };
 
   const stats = [
     {
@@ -46,7 +101,7 @@ const Dashboard = () => {
             <Heart className="w-8 h-8 text-primary" />
             <h1 className="text-2xl font-bold">Hridamrit</h1>
           </div>
-          <Button variant="ghost" onClick={() => navigate("/")}>
+          <Button variant="ghost" onClick={handleLogout}>
             Logout
           </Button>
         </div>
@@ -56,7 +111,7 @@ const Dashboard = () => {
       <main className="container mx-auto px-4 py-8">
         {/* Welcome Section */}
         <div className="mb-8">
-          <h2 className="text-3xl font-bold mb-2">Welcome back, John!</h2>
+          <h2 className="text-3xl font-bold mb-2">Welcome back, {userName}!</h2>
           <p className="text-muted-foreground">Here's your heart health overview</p>
         </div>
 
