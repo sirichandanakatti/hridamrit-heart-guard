@@ -32,6 +32,7 @@ const HealthDataForm = ({ onPredictionComplete }: HealthDataFormProps) => {
 
   useEffect(() => {
     checkGoogleFitConnection();
+    handleOAuthCallback();
   }, []);
 
   const checkGoogleFitConnection = async () => {
@@ -58,6 +59,46 @@ const HealthDataForm = ({ onPredictionComplete }: HealthDataFormProps) => {
     }
   };
 
+  const handleOAuthCallback = async () => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const code = urlParams.get('code');
+    
+    if (!code) return;
+
+    try {
+      const { data: user } = await supabase.auth.getUser();
+      if (!user.user) return;
+
+      // Exchange code for tokens
+      const { data: tokens, error: tokenError } = await supabase.functions.invoke('google-fit-auth', {
+        body: { code }
+      });
+
+      if (tokenError) throw tokenError;
+
+      // Store tokens in database
+      const { error: upsertError } = await supabase
+        .from('google_fit_data')
+        .upsert({
+          user_id: user.user.id,
+          access_token: tokens.access_token,
+          refresh_token: tokens.refresh_token,
+          token_expiry: new Date(Date.now() + tokens.expires_in * 1000).toISOString()
+        }, { onConflict: 'user_id' });
+
+      if (upsertError) throw upsertError;
+
+      // Clean URL and sync data
+      window.history.replaceState({}, document.title, window.location.pathname);
+      setGoogleFitConnected(true);
+      toast.success("Google Fit connected successfully!");
+      await syncGoogleFitData();
+    } catch (error: any) {
+      console.error("OAuth callback error:", error);
+      toast.error("Failed to connect Google Fit");
+    }
+  };
+
   const handleGoogleFitAuth = () => {
     const CLIENT_ID = import.meta.env.VITE_GOOGLE_FIT_CLIENT_ID;
     const REDIRECT_URI = `${window.location.origin}/dashboard`;
@@ -68,7 +109,8 @@ const HealthDataForm = ({ onPredictionComplete }: HealthDataFormProps) => {
       `redirect_uri=${REDIRECT_URI}&` +
       `response_type=code&` +
       `scope=${SCOPE}&` +
-      `access_type=offline`;
+      `access_type=offline&` +
+      `prompt=consent`;
     
     window.location.href = authUrl;
   };
