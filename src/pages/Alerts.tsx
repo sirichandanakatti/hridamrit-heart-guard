@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Heart, ArrowLeft, Bell, Phone, MessageSquare, AlertTriangle } from "lucide-react";
@@ -7,23 +7,106 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { toast } from "sonner";
+import { supabase } from "@/integrations/supabase/client";
 
 const Alerts = () => {
   const navigate = useNavigate();
-  const [phoneNumber, setPhoneNumber] = useState("+91 98765 43210");
+  const [phoneNumber, setPhoneNumber] = useState("");
   const [alertSettings, setAlertSettings] = useState({
     highHeartRate: true,
     abnormalBP: true,
     missedMedication: false,
     dailyReminder: true
   });
+  const [isSaving, setIsSaving] = useState(false);
 
-  const handleSaveSettings = () => {
-    toast.success("Alert settings saved successfully!");
+  useEffect(() => {
+    loadAlertSettings();
+  }, []);
+
+  const loadAlertSettings = async () => {
+    try {
+      const { data: user } = await supabase.auth.getUser();
+      if (user.user) {
+        const { data } = await supabase
+          .from('alert_settings')
+          .select('*')
+          .eq('user_id', user.user.id)
+          .maybeSingle();
+
+        if (data) {
+          setPhoneNumber(data.phone_number);
+          setAlertSettings({
+            highHeartRate: data.high_heart_rate,
+            abnormalBP: data.abnormal_bp,
+            missedMedication: data.missed_medication,
+            dailyReminder: data.daily_reminder
+          });
+        }
+      }
+    } catch (error) {
+      console.error("Error loading alert settings:", error);
+    }
   };
 
-  const handleTestSMS = () => {
-    toast.success("Test SMS sent to " + phoneNumber);
+  const handleSaveSettings = async () => {
+    if (!phoneNumber || phoneNumber.trim() === "") {
+      toast.error("Please enter a phone number");
+      return;
+    }
+
+    setIsSaving(true);
+    try {
+      const { data: user } = await supabase.auth.getUser();
+      if (!user.user) {
+        toast.error("Please login first");
+        return;
+      }
+
+      const { error } = await supabase
+        .from('alert_settings')
+        .upsert({
+          user_id: user.user.id,
+          phone_number: phoneNumber,
+          high_heart_rate: alertSettings.highHeartRate,
+          abnormal_bp: alertSettings.abnormalBP,
+          missed_medication: alertSettings.missedMedication,
+          daily_reminder: alertSettings.dailyReminder
+        });
+
+      if (error) throw error;
+
+      toast.success("Alert settings saved successfully!");
+    } catch (error: any) {
+      console.error("Save error:", error);
+      toast.error("Failed to save settings");
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
+  const handleTestSMS = async () => {
+    if (!phoneNumber || phoneNumber.trim() === "") {
+      toast.error("Please enter a phone number first");
+      return;
+    }
+
+    try {
+      const { data, error } = await supabase.functions.invoke('send-sms-alert', {
+        body: {
+          phoneNumber,
+          message: "This is a test alert from Hridamrit. Your SMS alert system is working correctly!",
+          alertType: "Test"
+        }
+      });
+
+      if (error) throw error;
+
+      toast.success("Test SMS sent to " + phoneNumber);
+    } catch (error: any) {
+      console.error("SMS error:", error);
+      toast.error("Failed to send test SMS");
+    }
   };
 
   const alertTypes = [
@@ -208,8 +291,8 @@ const Alerts = () => {
 
         {/* Save Button */}
         <div className="mt-8 flex justify-end">
-          <Button variant="hero" size="lg" onClick={handleSaveSettings}>
-            Save All Alert Settings
+          <Button variant="hero" size="lg" onClick={handleSaveSettings} disabled={isSaving}>
+            {isSaving ? "Saving..." : "Save All Alert Settings"}
           </Button>
         </div>
       </main>

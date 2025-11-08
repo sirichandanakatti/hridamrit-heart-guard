@@ -14,6 +14,87 @@ export type Database = {
   }
   public: {
     Tables: {
+      alert_settings: {
+        Row: {
+          abnormal_bp: boolean | null
+          created_at: string | null
+          daily_reminder: boolean | null
+          high_heart_rate: boolean | null
+          id: string
+          missed_medication: boolean | null
+          phone_number: string
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          abnormal_bp?: boolean | null
+          created_at?: string | null
+          daily_reminder?: boolean | null
+          high_heart_rate?: boolean | null
+          id?: string
+          missed_medication?: boolean | null
+          phone_number: string
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          abnormal_bp?: boolean | null
+          created_at?: string | null
+          daily_reminder?: boolean | null
+          high_heart_rate?: boolean | null
+          id?: string
+          missed_medication?: boolean | null
+          phone_number?: string
+          updated_at?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
+      google_fit_data: {
+        Row: {
+          access_token: string
+          calories: number | null
+          created_at: string | null
+          height: number | null
+          id: string
+          last_synced: string | null
+          refresh_token: string | null
+          steps: number | null
+          token_expiry: string | null
+          updated_at: string | null
+          user_id: string
+          weight: number | null
+        }
+        Insert: {
+          access_token: string
+          calories?: number | null
+          created_at?: string | null
+          height?: number | null
+          id?: string
+          last_synced?: string | null
+          refresh_token?: string | null
+          steps?: number | null
+          token_expiry?: string | null
+          updated_at?: string | null
+          user_id: string
+          weight?: number | null
+        }
+        Update: {
+          access_token?: string
+          calories?: number | null
+          created_at?: string | null
+          height?: number | null
+          id?: string
+          last_synced?: string | null
+          refresh_token?: string | null
+          steps?: number | null
+          token_expiry?: string | null
+          updated_at?: string | null
+          user_id?: string
+          weight?: number | null
+        }
+        Relationships: []
+      }
       health_predictions: {
         Row: {
           age: number | null

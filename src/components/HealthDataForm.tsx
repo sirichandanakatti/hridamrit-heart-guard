@@ -1,10 +1,10 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Loader2, Activity } from "lucide-react";
+import { Loader2, Activity, RefreshCw } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 
@@ -14,6 +14,8 @@ interface HealthDataFormProps {
 
 const HealthDataForm = ({ onPredictionComplete }: HealthDataFormProps) => {
   const [isLoading, setIsLoading] = useState(false);
+  const [isSyncing, setIsSyncing] = useState(false);
+  const [googleFitConnected, setGoogleFitConnected] = useState(false);
   const [formData, setFormData] = useState({
     age: "",
     gender: "1",
@@ -27,6 +29,103 @@ const HealthDataForm = ({ onPredictionComplete }: HealthDataFormProps) => {
     alcohol: "0",
     physical_activity: "1"
   });
+
+  useEffect(() => {
+    checkGoogleFitConnection();
+  }, []);
+
+  const checkGoogleFitConnection = async () => {
+    try {
+      const { data: user } = await supabase.auth.getUser();
+      if (user.user) {
+        const { data } = await supabase
+          .from('google_fit_data')
+          .select('*')
+          .eq('user_id', user.user.id)
+          .maybeSingle();
+        
+        if (data) {
+          setGoogleFitConnected(true);
+          setFormData(prev => ({
+            ...prev,
+            height: data.height?.toString() || "",
+            weight: data.weight?.toString() || "",
+          }));
+        }
+      }
+    } catch (error) {
+      console.error("Error checking Google Fit connection:", error);
+    }
+  };
+
+  const handleGoogleFitAuth = () => {
+    const CLIENT_ID = import.meta.env.VITE_GOOGLE_FIT_CLIENT_ID;
+    const REDIRECT_URI = `${window.location.origin}/dashboard`;
+    const SCOPE = "https://www.googleapis.com/auth/fitness.activity.read https://www.googleapis.com/auth/fitness.body.read";
+    
+    const authUrl = `https://accounts.google.com/o/oauth2/v2/auth?` +
+      `client_id=${CLIENT_ID}&` +
+      `redirect_uri=${REDIRECT_URI}&` +
+      `response_type=code&` +
+      `scope=${SCOPE}&` +
+      `access_type=offline`;
+    
+    window.location.href = authUrl;
+  };
+
+  const syncGoogleFitData = async () => {
+    setIsSyncing(true);
+    try {
+      const { data: user } = await supabase.auth.getUser();
+      if (!user.user) {
+        toast.error("Please login first");
+        return;
+      }
+
+      const { data: fitData } = await supabase
+        .from('google_fit_data')
+        .select('access_token')
+        .eq('user_id', user.user.id)
+        .maybeSingle();
+
+      if (!fitData) {
+        toast.error("Please connect Google Fit first");
+        return;
+      }
+
+      const { data, error } = await supabase.functions.invoke('fetch-google-fit-data', {
+        body: { accessToken: fitData.access_token }
+      });
+
+      if (error) throw error;
+
+      // Update form with Google Fit data
+      setFormData(prev => ({
+        ...prev,
+        height: data.height?.toString() || prev.height,
+        weight: data.weight?.toString() || prev.weight,
+      }));
+
+      // Update database
+      await supabase
+        .from('google_fit_data')
+        .update({
+          height: data.height,
+          weight: data.weight,
+          steps: data.steps,
+          calories: data.calories,
+          last_synced: new Date().toISOString()
+        })
+        .eq('user_id', user.user.id);
+
+      toast.success("Google Fit data synced successfully!");
+    } catch (error: any) {
+      console.error("Sync error:", error);
+      toast.error("Failed to sync Google Fit data");
+    } finally {
+      setIsSyncing(false);
+    }
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -103,10 +202,54 @@ const HealthDataForm = ({ onPredictionComplete }: HealthDataFormProps) => {
           Health Data Input
         </CardTitle>
         <CardDescription>
-          Enter your health information for heart attack risk prediction
+          Connect Google Fit or enter your health information manually
         </CardDescription>
       </CardHeader>
       <CardContent>
+        {/* Google Fit Integration */}
+        <div className="mb-6 p-4 bg-primary/5 rounded-lg border border-primary/20">
+          <div className="flex items-center justify-between mb-2">
+            <div className="flex items-center gap-2">
+              <Activity className="w-5 h-5 text-primary" />
+              <h3 className="font-semibold">Google Fit Integration</h3>
+            </div>
+            {googleFitConnected && (
+              <span className="text-xs bg-green-500/20 text-green-700 px-2 py-1 rounded">Connected</span>
+            )}
+          </div>
+          <p className="text-sm text-muted-foreground mb-3">
+            {googleFitConnected 
+              ? "Sync your latest health data from Google Fit" 
+              : "Connect to automatically import height, weight, steps, and calories"}
+          </p>
+          <div className="flex gap-2">
+            {!googleFitConnected ? (
+              <Button type="button" variant="outline" onClick={handleGoogleFitAuth}>
+                Connect Google Fit
+              </Button>
+            ) : (
+              <Button 
+                type="button" 
+                variant="outline" 
+                onClick={syncGoogleFitData}
+                disabled={isSyncing}
+              >
+                {isSyncing ? (
+                  <>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    Syncing...
+                  </>
+                ) : (
+                  <>
+                    <RefreshCw className="mr-2 h-4 w-4" />
+                    Sync Data
+                  </>
+                )}
+              </Button>
+            )}
+          </div>
+        </div>
+
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="space-y-2">
